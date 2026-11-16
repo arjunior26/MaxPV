@@ -822,18 +822,22 @@
 
     }));
 
-    // Maximums des jauges : puissance du compteur (configuration MaxPV),
+    // Maximums des jauges : puissance du compteur et courant associé (configuration MaxPV),
     // puissances PV et résistance (paramètres EcoPV P_INSTALLPV et P_RESISTANCE)
     function setGaugeMax(chart, value) {
       // tickPositions imposées : sinon Highcharts arrondit le maximum (ex : 3000 -> 3200)
-      if (value > 0) chart.yAxis[0].update({ max: value, tickPositions: [0, value] });
+      // format imposé : sinon Highcharts abrège les milliers (ex : 6000 -> 6k)
+      if (value > 0) chart.yAxis[0].update({ max: value, tickPositions: [0, value], labels: { format: '{value}' } });
     }
 
     var xhttpConfigMaxPV = new XMLHttpRequest();
     xhttpConfigMaxPV.onreadystatechange = function () {
       if (this.readyState == 4 && this.status == 200) {
         var doc = JSON.parse(this.responseText);
-        setGaugeMax(chartPact, parseInt(doc["p_compteur"]));
+        var pCompteur = parseInt(doc["p_compteur"]);
+        setGaugeMax(chartPact, pCompteur);
+        // Courant souscrit : 5 A par kVA (3 kVA -> 15 A ... 12 kVA -> 60 A)
+        setGaugeMax(chartIrms, pCompteur / 200);
       }
     };
     xhttpConfigMaxPV.open("GET", "api/get?configmaxpv", true);

@@ -128,7 +128,15 @@
                             <label class="form-check-label" for="mqtt_active">Activation MQTT - Home Assistant</label>
                         </div>
                     </div>
-                </div>    
+                </div>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" role="switch" id="mqtt_reboot_active">
+                            <label class="form-check-label" for="mqtt_reboot_active">Redémarrage de l'ESP si MQTT perdu plus de 15 min (perte de l'historique)</label>
+                        </div>
+                    </div>
+                </div>
                 <div class="row mb-3">
                     <div class="col-6">
                         <label for="mqtt_ip" class="form-label">IP du serveur MQTT</label>
@@ -287,9 +295,13 @@
                 <br>
                 <div class="row mb-3">
                     <div class="col-6">
-                        <label for="p_compteur" class="form-label">Puissance du compteur (VA)</label>
-                        <input type="number" class="form-control text-center" id="p_compteur" placeholder="xxxxx"
-                            required min="1000" max="36000" step="1">
+                        <label for="p_compteur" class="form-label">Puissance du compteur (kVA)</label>
+                        <select class="form-select text-center" id="p_compteur" required>
+                            <option value="3000">3</option>
+                            <option value="6000">6</option>
+                            <option value="9000">9</option>
+                            <option value="12000">12</option>
+                        </select>
                     </div>
                 </div>
                 <br>
@@ -378,6 +390,8 @@
                     document.getElementById("mqtt_pass").value = doc["mqtt_pass"];
                     if (doc["mqtt_active"] == "1") mqtt_active.checked = true;
                     else mqtt_active.checked = false;
+                    if (doc["mqtt_reboot_active"] == "1") mqtt_reboot_active.checked = true;
+                    else mqtt_reboot_active.checked = false;
                     document.getElementById("boost_timer_hour").value = doc["boost_timer_hour"];
                     document.getElementById("boost_timer_minute").value = doc["boost_timer_minute"];
                     if (doc["boost_timer_active"] == "1") boost_timer_active.checked = true;
@@ -424,6 +438,8 @@
             doc["mqtt_pass"] = document.getElementById("mqtt_pass").value;
             if(mqtt_active.checked == true) doc["mqtt_active"] = "1";
             else doc["mqtt_active"] = "0";
+            if(mqtt_reboot_active.checked == true) doc["mqtt_reboot_active"] = "1";
+            else doc["mqtt_reboot_active"] = "0";
             doc["boost_timer_hour"] = document.getElementById("boost_timer_hour").value;
             doc["boost_timer_minute"] = document.getElementById("boost_timer_minute").value;
             if(boost_timer_active.checked == true) doc["boost_timer_active"] = "1";
@@ -472,6 +488,8 @@
                 document.getElementById("mqtt_pass").value = doc["mqtt_pass"] ?? "";
                 if (doc["mqtt_active"] == "1") mqtt_active.checked = true;
                 else mqtt_active.checked = false;
+                if (doc["mqtt_reboot_active"] == "1") mqtt_reboot_active.checked = true;
+                else mqtt_reboot_active.checked = false;
                 document.getElementById("boost_timer_hour").value = doc["boost_timer_hour"] ?? "";
                 document.getElementById("boost_timer_minute").value = doc["boost_timer_minute"] ?? "";
                 if (doc["boost_timer_active"] == "1") boost_timer_active.checked = true;
